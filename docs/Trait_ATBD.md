@@ -10,6 +10,7 @@ Corresponding author: K. Dana Chadwick (dana.chadwick@jpl.nasa.gov)
 1. Please note that this ATBD will be updated on an ongoing basis as the SBG VSWIR project progresses. This is intended to be a place where the community can find the most up-to-date information on the current plans for algorithm development and offer contributions. 
 2. The canopy surface trait demonstration products are baselined to be generated with a partial least squares regression (PLSR) framework. The team is actively consdiering other algorithm options and welcomes contributions from the community. 
 3. The products will include foliar nitrogen, leaf mass per area, and leaf water content.
+4. Current work and development efforts are being documented under the [sbg vswir terrestrial vegetation algorithms project](https://github.com/orgs/sbg-vswir/projects/2/views/2?groupedBy%5BcolumnId%5D=168240171) in the sbg-vswir github organization. 
 
 **Version:** 1.0
 
@@ -71,7 +72,7 @@ There are a variety of challenges to overcome in order to develop these algorith
 
 - **Strategies for trait value aggregation from in situ collections to pixel resolution.** There are a variety of ways that a canopy trait value for a particular pixel can be determined from in situ data. There are also questions about if the goal is to estimate the value of PV traits per pixel, ignoring the non-PV fraction, or if the goal is to estimate the value of PV traits for the area of the pixel, setting non-PV cover to a value of zero. We are baselining the former scenario. The diagram below highlights the differences in aggregation approaches that could be utilized. ![img.png](figs/PlotLevelAggregationConsiderations.png) **Figure 3.** _Outline of various aggregation methods for canopy foliar traits._  
  
-- **Determining which pixels will have the PLSR algorithms applied.** The PLSR algorithms are designed to estimate the trait values for the PV fraction of the pixel. The algorithms will only be applied to pixels that have a PV fraction above a certain threshold. The working group is currently working on determining the appropriate threshold for SBG VSWIR data utilizing data from the SHIFT project. There is a placeholder in section 4.4 for the threshold value. 
+- **Determining which pixels will have the PLSR algorithms applied.** The PLSR algorithms are designed to estimate the trait values for the PV fraction of the pixel. The algorithms will only be applied to pixels that have a PV fraction above a certain threshold. The working group is currently working on determining the appropriate threshold for SBG VSWIR data utilizing data from the SHIFT project. There is a placeholder in section 4.4 for the threshold value. _note: it may be necessary to apply different fractional cover constraints depending on the other cover types present - onging work is considering scenarios where backgroud is bare surfaces of varying mineral compositions, non-photosynthentic vegetation, and standing water_
 
 - **Scaling from airborne to spaceborne.** The algorithms have been developed on airborne data, which often has a much higher spatial resolution than the planned GSD of SBG VSWIR. The working group is assessing methods for scaling trait models to coarser GSDs by leveraging EMIT as a precursor. This scaling may include developing a method to aggregate the airborne data to the SBG VSWIR pixel size and utilizing those data to train the coarser resolution PLSR algorithms.  
 
@@ -81,7 +82,18 @@ The
 
 ### 4.2 Mathematical Theory
 
+Partial Least Squares Regression (PLSR)
+
+Partial Least Squares Regression (PLSR) is a multivariate statistical method used to model relationships between input variables (predictors) and output variables (responses). It is particularly useful when the predictors are highly collinear or when the number of predictors exceeds the number of observations - both of these conditions are often met with VSWIR imaging spectroscopy data. PLSR projects both the predictor (reflectance) and response (trait) variables to a new space to extract relevant information. PLSR aims to find latent components that maximize the covariance between the predictor matrix. 
+
 #### 4.2.1 Mathematical theory assumptions
+When applying PLSR, the following assumptions are typically made:
+
+- Linearity: The relationships between predictor variables and response variables are assumed to be linear.
+- Latent Structure: PLSR assumes that there is a low-dimensional latent structure capturing most of the covariance between predictors and responses.
+- Multicollinearity: PLSR is effective under the assumption that multicollinearity exists among predictors.
+- Noise and Error: Measurement errors and noise are assumed to be present, but they should not dominate the relationship between variables.
+- Sufficient Data: While PLSR can handle cases where $p > n$, having sufficient data for reliable component extraction is beneficial.
 
 ### 4.3 Algorithm Input Variables
 
@@ -92,10 +104,10 @@ The input variables for terrestrial vegetation PLSR products are: isofit correct
 Output variables for foliar nitrogen, leaf mass per area, and leaf water content are generated for each pixel in the input data with a fractional cover >= 0.XX photosynthetic vegetation. For all other pixels, the output is set to NaN. Units are as follows: foliar nitrogen (g N/g of dry foliar mass), leaf mass per area (g dry mass/m^2 of leaf area), and leaf water content (g water/g fresh foliage). Uncertianties are also generated for each output variable in the same units as the output variable.
 
 ## 5 Algorithm Usage Constraints
-The algorithms will be developed with the datasets avaliable to the team. There are not currently any plans for SBG VSWIR to fund in situ data collection activities. Therefore the algorithms will be most appropriate for interpretation within the regions where there are training data available. This ATBD will contain a map and list of the regions that have training data for individuals to assess the likely reliability in their region of interest. The SBG VSWIR terrestrial vegetation team is working to compile a series of protocols for the community to use in support of improving the VSWIR terrestial vegetation algorithms. The team anticipates working with the community to gather the largest possible training dataset and will continue to update the PLSR coefficients as new data become available.
+The algorithms will be developed with the datasets avaliable to the team. There are not currently any plans for SBG VSWIR to fund _in situ_ data collection activities due to budget constraints. Therefore the algorithms will be most appropriate for interpretation within the regions where there are training data available. This ATBD will contain a map and list of the regions that have training data for users to assess the likely reliability in their region of interest. The SBG VSWIR terrestrial vegetation team is working to compile a series of protocols for the community to use in support of improving the VSWIR terrestial vegetation algorithms. The team anticipates working with the community to gather the largest possible training dataset and will continue to update the PLSR coefficients as new data become available.
 
 ## 6 Performance Assessment
-The terrestrial vegetation algorithms are part of the demonstration product suite that will be provided by SBG VSWIR. These products will be spot verified as possible. The team will do the best performance assessment possible with the data available.
+The terrestrial vegetation algorithms are part of the demonstration product suite that will be provided by SBG VSWIR. These products will be spot verified as possible post-launch. The team will do the best performance assessment possible with the data available. The models used here will be parameterized using the SBG-PLANTS database, which is being assembled leveraging data collections from SHIFT, NEON, EnSPEC, ABOVE, CHESS, AVUELO, and others as they become avaliable. Please be in touch if you have datasets that you believe could improve our algorithms and introduce sources of data from new ecoregions or bolster the datasets we already have. This platform is intended to be a community resource. 
 
 ### 6.1 Validation Methods
 
